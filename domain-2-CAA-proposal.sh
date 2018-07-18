@@ -1,6 +1,12 @@
 #!/bin/bash
 
-curl "https://certspotter.com/api/v0/certs?expired=false&duplicate=false&domain=kpn.com" | \
+if [ -z $1 ]; then
+    echo "Error: please use an domain as input for this."
+    exit 1
+fi
+
+
+curl "https://certspotter.com/api/v0/certs?expired=false&duplicate=false&domain=$1" | \
     grep issuer | \
     sort -u | \
     while read LINE; do 
