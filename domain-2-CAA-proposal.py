@@ -12,6 +12,7 @@ parser.add_argument("--domain", help="Domain to scan.", type=str)
 parser.add_argument("--matchissuer", help="Match to a specific issuer.", type=str)
 parser.add_argument('--issuer', default=False, action="store_true")
 parser.add_argument('--issuercount', default=False, action="store_true")
+parser.add_argument('--uniqueissuers', default=False, action="store_true")
 parser.add_argument('--dns',  default=False, action="store_true")
 parser.add_argument('--out', default=False, action="store_true")
 args = parser.parse_args()
@@ -26,16 +27,32 @@ if args.domain is None:
 #    sys.exit(1)
 
 # Fetch all data, seeve later
-html = urlopen("https://certspotter.com/api/v0/certs?expired=false&duplicate=false&domain=" + args.domain)
-res = json.loads(html.read())
+try:
+    html = urlopen("https://certspotter.com/api/v0/certs?expired=false&duplicate=false&domain=" + args.domain).read().decode("utf-8")
+    if html == None or len(html) == 0:
+        print("Could not get data")
+        sys.exit(1)
+except Exception as e:
+    sys.exit(1)
 
+res = json.loads(html)
 pp = pprint.PrettyPrinter(indent=4)
 
 if args.out:
     pp.pprint(res)
 
+def get_unique_issuers():
+    l = []
+    for ct_cert in res:
+        l.append(ct_cert['issuer'])
+    for i in sorted(set(l)):
+        print(i)
+
+if args.uniqueissuers:
+    get_unique_issuers()
 
 if args.issuer:
+    # Print all issuers
     for ct_cert in res:
         print(ct_cert['issuer'])
 
@@ -58,7 +75,7 @@ if args.issuercount:
         d = {}
         d['issuer'] = ct_cert['issuer']
         d['count'] = 1
-        list.append(ct_cert['issuer'])
+        l.append(ct_cert['issuer'])
     d = []
 
 if args.dns:
