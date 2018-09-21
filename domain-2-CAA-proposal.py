@@ -139,6 +139,18 @@ if args.caa is not None:
             got_this.append("amazon")
             print('CAA 0 issue "amazonaws.com"')
             print('CAA 0 issuewild "amazonaws.com"')
+        elif "let's encrypt" in issuer_dn.lower():
+            if "letsencrypt" in got_this:
+                continue
+            got_this.append("letsencrypt")
+            print('CAA 0 issue "letsencrypt.org"')
+            print('CAA 0 issuewild "letsencrypt.org"')
+        elif "thawte" in issuer_dn.lower():
+            if "thawte" in got_this:
+                continue
+            got_this.append("thawte")
+            print('CAA 0 issue "thawte.com"')
+            print('CAA 0 issuewild "thawte.com"')
         else:
             print("-- No CAA config yet, apply for a support ticket", issuer_dn)
 
