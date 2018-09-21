@@ -29,37 +29,48 @@ def add_unique_to_dict_list(dict_list, key, value):
 
 parser = argparse.ArgumentParser("domain-2-CAA-proposal.py")
 parser.add_argument("--domain", help="Domain to scan.", type=str)
+parser.add_argument('--caa', help="Create a list of DNS CAA records based on the used issuers.", default=False, action="store_true")
 parser.add_argument("--matchissuer", help="Match to a specific issuer.", type=str)
 parser.add_argument('--issuer', help="List all issuers.", default=False, action="store_true")
 parser.add_argument('--issuercount', help="Count issuers.", default=False, action="store_true")
 parser.add_argument('--uniqueissuers', help="List all issuers, only once.", default=False, action="store_true")
 parser.add_argument('--dns', help="Extract all Subject Alt Name DNS record from each certificate and list them.", default=False, action="store_true")
-parser.add_argument('--caa', help="Create a list of DNS CAA records based on the used issuers.", default=False, action="store_true")
+parser.add_argument('--caa-tips', help="Tips on CAA configuration.", default=False, action="store_true")
 parser.add_argument('--out', help="Output all certificates in full.", default=False, action="store_true")
 args = parser.parse_args()
 
 
-if args.domain is None:
+if args.domain is None and args.caa_tips is False:
     parser.print_help(sys.stderr)
     sys.exit(1)
+
+if args.caa_tips:
+    print("= For reporting:")
+    print('CAA 0 iodef "mailto:caa-reports@yourabusedesk.com"')
+    print()
+    print("= How to block a wildcard certificate in general:")
+    print('CAA 0 issuewild ";"')
+    sys.exit(0)
 
 #if not (args.issuer or args.dns or args.matchissuer):
 #    parser.print_help(sys.stderr)
 #    sys.exit(1)
 
-# Fetch all data, seeve later
-try:
-    html = urlopen("https://certspotter.com/api/v0/certs?expired=false&duplicate=false&domain=" + args.domain).read().decode("utf-8")
-    if html == None or len(html) == 0:
-        print("Could not get data")
+if args.domain is not None:
+    # Fetch all data, seeve later
+    try:
+        html = urlopen("https://certspotter.com/api/v0/certs?expired=false&duplicate=false&domain=" + args.domain).read().decode("utf-8")
+        if html == None or len(html) == 0:
+            print("Could not get data")
+            sys.exit(1)
+    except Exception as e:
         sys.exit(1)
-except Exception as e:
-    sys.exit(1)
 
-res = json.loads(html)
-pp = pprint.PrettyPrinter(indent=4)
+    # The output
+    res = json.loads(html)
 
 if args.out:
+    pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(res)
 
 if args.uniqueissuers:
@@ -94,7 +105,8 @@ if args.matchissuer is not None:
         if args.matchissuer in ct_cert['issuer']:
             pp.pprint(ct_cert)
 
-if args.caa is not None:
+
+if args.caa:
     l = []
     for ct_cert in res:
         l.append(ct_cert['issuer'])
@@ -151,6 +163,36 @@ if args.caa is not None:
             got_this.append("thawte")
             print('CAA 0 issue "thawte.com"')
             print('CAA 0 issuewild "thawte.com"')
+        elif "symantec" in issuer_dn.lower():
+            if "symantec" in got_this:
+                continue
+            got_this.append("symantec")
+            print('CAA 0 issue "symantec.com"')
+            print('CAA 0 issuewild "symantec.com"')
+        elif "godaddy" in issuer_dn.lower():
+            if "godaddy" in got_this:
+                continue
+            got_this.append("godaddy")
+            print('CAA 0 issue "godaddy.com"')
+            print('CAA 0 issuewild "godaddy.com"')
+        elif "rapidssl" in issuer_dn.lower():
+            if "rapidssl" in got_this:
+                continue
+            got_this.append("rapidssl")
+            print('CAA 0 issue "rapidssl.com"')
+            print('CAA 0 issuewild "rapidssl.com"')
+        elif "certum" in issuer_dn.lower():
+            if "certum" in got_this:
+                continue
+            got_this.append("certum")
+            print('CAA 0 issue "certum.pl"')
+            print('CAA 0 issuewild "certum.pl"')
+        elif "goog" in issuer_dn.lower():
+            if "goog" in got_this:
+                continue
+            got_this.append("goog")
+            print('CAA 0 issue "pki.goog"')
+            print('CAA 0 issuewild "pki.goog"')
         else:
             print("-- No CAA config yet, apply for a support ticket", issuer_dn)
 
