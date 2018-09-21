@@ -139,6 +139,12 @@ if args.caa:
             got_this.append("geotrust")
             print('CAA 0 issue "geotrust.com"')
             print('CAA 0 issuewild "geotrust.com"')
+        elif "trust provider" in issuer_dn.lower():
+            if "trust provider" in got_this:
+                continue
+            got_this.append("trust provider")
+            print('CAA 0 issue "geotrust.com"')
+            print('CAA 0 issuewild "geotrust.com"')
         elif "comodo" in issuer_dn.lower():
             if "comodo" in got_this:
                 continue
@@ -193,6 +199,18 @@ if args.caa:
             got_this.append("goog")
             print('CAA 0 issue "pki.goog"')
             print('CAA 0 issuewild "pki.goog"')
+        elif "entrust" in issuer_dn.lower():
+            if "entrust" in got_this:
+                continue
+            got_this.append("entrust")
+            print('CAA 0 issue "entrust.net"')
+            print('CAA 0 issuewild "entrust.net"')
+        elif "dfn" in issuer_dn.lower():
+            if "dfn" in got_this:
+                continue
+            got_this.append("dfn")
+            print('CAA 0 issue "pki.dfn.de"')
+            print('CAA 0 issuewild "pki.dfn.de"')
         else:
             print("-- No CAA config yet, apply for a support ticket", issuer_dn)
 
