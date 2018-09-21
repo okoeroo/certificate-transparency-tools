@@ -30,12 +30,12 @@ def add_unique_to_dict_list(dict_list, key, value):
 parser = argparse.ArgumentParser("domain-2-CAA-proposal.py")
 parser.add_argument("--domain", help="Domain to scan.", type=str)
 parser.add_argument("--matchissuer", help="Match to a specific issuer.", type=str)
-parser.add_argument('--issuer', default=False, action="store_true")
-parser.add_argument('--issuercount', default=False, action="store_true")
-parser.add_argument('--uniqueissuers', default=False, action="store_true")
-parser.add_argument('--dns',  default=False, action="store_true")
-parser.add_argument('--caa',  default=False, action="store_true")
-parser.add_argument('--out', default=False, action="store_true")
+parser.add_argument('--issuer', help="List all issuers.", default=False, action="store_true")
+parser.add_argument('--issuercount', help="Count issuers.", default=False, action="store_true")
+parser.add_argument('--uniqueissuers', help="List all issuers, only once.", default=False, action="store_true")
+parser.add_argument('--dns', help="Extract all Subject Alt Name DNS record from each certificate and list them.", default=False, action="store_true")
+parser.add_argument('--caa', help="Create a list of DNS CAA records based on the used issuers.", default=False, action="store_true")
+parser.add_argument('--out', help="Output all certificates in full.", default=False, action="store_true")
 args = parser.parse_args()
 
 
