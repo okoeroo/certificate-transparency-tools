@@ -1,3 +1,20 @@
+# Domain-2-CAA-proposal
+
+Fetches Certificate Transparency results from certspotter and is able to filter, count, and list various aspects of the certificates. Ultimately it can output DNS CAA record configurations.
+
+
+# Dependencies
+
+Python 3
+urlopen
+json
+pprint
+sys
+argparser
+collections
+
+
+# Usage
 usage: domain-2-CAA-proposal.py [-h] [--domain DOMAIN] [--caa]
                                 [--matchissuer MATCHISSUER] [--issuer]
                                 [--issuercount] [--uniqueissuers] [--dns]
