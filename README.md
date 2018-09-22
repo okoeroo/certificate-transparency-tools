@@ -5,16 +5,17 @@ Fetches Certificate Transparency results from certspotter and is able to filter,
 
 # Dependencies
 
-Python 3
-urlopen
-json
-pprint
-sys
-argparser
-collections
+* Python 3
+* urlopen
+* json
+* pprint
+* sys
+* argparser
+* collections
 
 
 # Usage
+```
 usage: domain-2-CAA-proposal.py [-h] [--domain DOMAIN] [--caa]
                                 [--matchissuer MATCHISSUER] [--issuer]
                                 [--issuercount] [--uniqueissuers] [--dns]
@@ -34,3 +35,4 @@ optional arguments:
                         certificate and list them.
   --caa-tips            Tips on CAA configuration.
   --out                 Output all certificates in full.
+```
