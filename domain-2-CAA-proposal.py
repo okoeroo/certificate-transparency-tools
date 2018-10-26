@@ -12,8 +12,7 @@ def get_unique_issuers():
     l = []
     for ct_cert in res:
         l.append(ct_cert['issuer'])
-    for i in sorted(set(l)):
-        print(i)
+    return sorted(set(l))
 
 def add_unique_to_dict_list(dict_list, key, value):
     for d in dict_list:
@@ -29,6 +28,7 @@ def add_unique_to_dict_list(dict_list, key, value):
 
 parser = argparse.ArgumentParser("domain-2-CAA-proposal.py")
 parser.add_argument("--domain", help="Domain to scan.", type=str)
+parser.add_argument("--domain-file", help="File with domains to scan.", type=str)
 parser.add_argument('--caa', help="Create a list of DNS CAA records based on the used issuers.", default=False, action="store_true")
 parser.add_argument("--matchissuer", help="Match to a specific issuer.", type=str)
 parser.add_argument('--issuer', help="List all issuers.", default=False, action="store_true")
@@ -40,7 +40,7 @@ parser.add_argument('--out', help="Output all certificates in full.", default=Fa
 args = parser.parse_args()
 
 
-if args.domain is None and args.caa_tips is False:
+if args.domain is None and args.domain_file is None and args.caa_tips is False:
     parser.print_help(sys.stderr)
     sys.exit(1)
 
@@ -74,7 +74,9 @@ if args.out:
     pp.pprint(res)
 
 if args.uniqueissuers:
-    get_unique_issuers()
+    l = get_unique_issuers()
+    for i in l:
+        print(i)
 
 if args.issuer:
     # Print all issuers
@@ -105,15 +107,9 @@ if args.matchissuer is not None:
         if args.matchissuer in ct_cert['issuer']:
             pp.pprint(ct_cert)
 
-
 if args.caa:
-    l = []
-    for ct_cert in res:
-        l.append(ct_cert['issuer'])
-
     got_this = []
-
-    unique_issuers = sorted(set(l))
+    unique_issuers = get_unique_issuers()
 
     for issuer_dn in unique_issuers:
         if "globalsign" in issuer_dn.lower():
